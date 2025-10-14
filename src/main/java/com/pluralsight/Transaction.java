@@ -1,15 +1,17 @@
 package com.pluralsight;
 
+import java.time.LocalDate;
+
 public class Transaction {
 
     //create properties
     private String vendor;
-    private String date;
+    private LocalDate date;
     private String description;
     private double amount;
 
     //generate constructor for Transaction objects
-    public Transaction(String vendor, String date, String description, double amount) {
+    public Transaction(String vendor, LocalDate date, String description, double amount) {
         this.vendor = vendor;
         this.date = date;
         this.description = description;
@@ -21,7 +23,7 @@ public class Transaction {
         return vendor;
     }
 
-    public String getDate() {
+    public LocalDate getDate() {
         return date;
     }
 
