@@ -29,11 +29,10 @@ public class AccountingLedger {
         } else if (homeOption.equals("P")) {
             System.out.println("test1");
         } else if (homeOption.equals("L")) {
-            fileReader();
+            ledgerScreen();
         } else if (homeOption.equals("X")) {
             System.out.println("test3");
-        }
-        else{
+        } else{
             System.out.println("Invalid option");
         }
     }
@@ -87,6 +86,36 @@ public class AccountingLedger {
         }
     }
     static void ledgerScreen(){
+        //create ledger screen
+        System.out.println("Display all transactions (A)");
+        System.out.println("Deposit (D)");
+        System.out.println("Payments (P)");
+        System.out.println("Reports (R)");
+        System.out.println("Home (H)");
+
+        //ask user what they would like to do
+        System.out.println("Select an option: ");
+        String ledgerOption = scanner.nextLine().toUpperCase();
+
+        //create an if statement for the ledger options given
+        if(ledgerOption.equals("A")){
+            fileReader();
+        }
+        else if (ledgerOption.equals("D")) {
+
+        }
+        else if (ledgerOption.equals("P")) {
+
+        }
+        else if (ledgerOption.equals("R")) {
+
+        }
+        else if (ledgerOption.equals("H")) {
+
+        }
+        else{
+            System.out.println("Invalid option");
+        }
 
     }
 }
