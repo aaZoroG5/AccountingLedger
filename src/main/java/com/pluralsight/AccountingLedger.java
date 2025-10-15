@@ -5,6 +5,7 @@ import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
 import java.time.LocalDate;
+import java.time.LocalTime;
 import java.util.ArrayList;
 import java.util.Scanner;
 
@@ -43,13 +44,12 @@ public class AccountingLedger {
             }
         }
     }
-
     //THIS METHOD READS THE CSV FILE
     public static void fileReader() {
         //create a try statement that catches I/O exception
         try {
             //create a file reader object connected to the file
-            FileReader payRollReader = new FileReader("transactions_30.csv");
+            FileReader payRollReader = new FileReader("transactions.csv");
             //create a buffer reader to manage input stream
             BufferedReader bufferedReader = new BufferedReader(payRollReader);
 
@@ -68,17 +68,21 @@ public class AccountingLedger {
                 //parse the strings into double
                 stringToDouble[0] = Double.parseDouble(firstSplit[3]);
 
-                LocalDate[] stringToTime = new LocalDate[1];
-                stringToTime[0] = LocalDate.parse(firstSplit[0]);
+                LocalDate[] stringToDate = new LocalDate[1];
+                stringToDate[0] = LocalDate.parse(firstSplit[0]);
+
+                LocalTime[] stringToTime = new LocalTime[1];
+                stringToTime[0] = LocalTime.parse(firstSplit[4]);
 
                 //initialize the variable to the corresponding arrays
-                LocalDate date = stringToTime[0];
+                LocalDate date = stringToDate[0];
                 String description = firstSplit[1];
                 String vendor = firstSplit[2];
                 double amount = stringToDouble[0];
+                LocalTime time = stringToTime[0];
 
                 //create a new instance of the employee class
-                Transaction transaction = new Transaction(vendor, date, description, amount);
+                Transaction transaction = new Transaction(vendor, date, description, amount, time);
 
                 //format and print the new instance by using getter methods
                 System.out.println("----------------------------------------------------");
@@ -91,7 +95,8 @@ public class AccountingLedger {
     //THIS METHOD DISPLAYS THE LEDGER SCREEN OPTIONS
     static void ledgerScreen() {
         //create ledger screen
-        System.out.println("Display all transactions (A)");
+        System.out.println("|| Ledger Options ||");
+        System.out.println("All transactions (A)");
         System.out.println("Deposits (D)");
         System.out.println("Payments (P)");
         System.out.println("Reports (R)");
@@ -134,7 +139,7 @@ public class AccountingLedger {
         }
 
         //create a new transaction object with the user input we previously collected
-        Transaction transaction = new Transaction(vendor, LocalDate.now(), description, amount);
+        Transaction transaction = new Transaction(vendor, LocalDate.now(), description, amount, LocalTime.now());
         //TransactionalWriter.appendTransaction(transaction);
         System.out.println(transaction.getAmount());
     }
