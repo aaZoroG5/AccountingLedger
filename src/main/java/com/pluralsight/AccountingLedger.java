@@ -153,22 +153,22 @@ public class AccountingLedger {
         //create a new transaction object with the user input we previously collected
         Transaction transaction = new Transaction(vendor, LocalDate.now(), description, amount, LocalTime.now());
         transactionsLedger.add(transaction);
- //       writeTransaction(transaction);
+        writeTransaction(transaction);
         System.out.printf("Your %s of $%.2f has been processed!\n",transaction.getDescription(), transaction.getAmount());
     }
     //THIS METHOD WRITES NEW TRANSACTION OBJECTS TO THE ARRAYLIST
     static void writeTransaction(Transaction transaction){//NOTE: had to add parameters so the writer can
         try {
             //create a file write object connected to the file
-            FileWriter fileWriter = new FileWriter("transactions.csv");
+            FileWriter fileWriter = new FileWriter("transactions.csv", true);//BUG FIX: THE TRUE PARAMETER OPENS THE FILE IF IT EXISTS AND APPENDS TO THE FILE, DOESN'T DELETE WHAT'S ALREADY THERE
             //create a buffer writer to manage input stream
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
             //format the buffer into the csv file format
-            bufferedWriter.write(String.format("%s|%s|%s|%.2f|%s\n", transaction.getVendor(), transaction.getDate(), transaction.getDescription(), transaction.getAmount(), transaction.getTime()));
-
+            bufferedWriter.write(String.format("%s|%s|%s|%.2f|%s%n", transaction.getVendor(), transaction.getDate(), transaction.getDescription(), transaction.getAmount(), transaction.getTime()));
+            //added %n in the string format for a newline rather than \n
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            System.out.println("Error writing to file");
         }
     }
     //THIS METHOD FILTERS THROUGH TRANSACTION AND SHOWS DEPOSITS
