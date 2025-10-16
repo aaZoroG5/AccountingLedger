@@ -123,9 +123,9 @@ public class AccountingLedger {
         } else if (ledgerOption.equals("P")) {
             filterPayments();
         } else if (ledgerOption.equals("R")) {
-
+            reportScreen();
         } else if (ledgerOption.equals("H")) {
-
+            mainScreen();
         } else {
             System.out.println("Invalid option");
         }
@@ -217,5 +217,36 @@ public class AccountingLedger {
             System.out.println("Error reading file");
         }
     }
+    //THIS METHOD DISPLAYS THE REPORT SCREEN
+    static void reportScreen(){
+        System.out.println("""
+                (1) Month to Date
+                (2) Previous Month
+                (3) Year to Date
+                (4) Previous Year
+                (5) Search by Vendor
+                (0) Back
+                """);
+        //ask and save user input
+        System.out.print("Select an option: ");
+        int reportOption = scanner.nextInt();
 
+        //create an if statement for each report option
+        if (reportOption == 1){
+
+        } else if (reportOption == 2) {
+
+        } else if (reportOption == 3) {
+
+        } else if (reportOption == 4) {
+
+        } else if (reportOption == 5) {
+
+        } else if (reportOption == 0) {
+            ledgerScreen();
+        }else{
+            System.out.println("Invalid option");
+        }
+    }
+    //THIS METHOD
 }
