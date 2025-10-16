@@ -1,6 +1,5 @@
 package com.pluralsight;
 
-import javax.sql.rowset.spi.TransactionalWriter;
 import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -15,7 +14,7 @@ public class AccountingLedger {
     //create a scanner
     static Scanner scanner = new Scanner(System.in);
     //create an arraylist for all transactions
-    public static ArrayList<Transaction> transactions = new ArrayList<>();
+    public static ArrayList<Transaction> transactionsLedger = new ArrayList<>();
 
     public static void main(String[] args) {
         System.out.println("|| Welcome to AA Ledger ||");
@@ -93,11 +92,14 @@ public class AccountingLedger {
 
                 //create a new instance of the employee class
                 Transaction transaction = new Transaction(vendor, date, description, amount, time);
-
+                transactionsLedger.add(transaction);//forgot to add to array
                 //format and print the new instance by using getter methods
                 System.out.println("----------------------------------------------------");
             }
             bufferedReader.close();
+//            for(var t : transactionsLedger){
+//                System.out.println(t.getDescription());} TEST
+
         } catch (IOException e) {
             e.printStackTrace();
         }
@@ -150,6 +152,7 @@ public class AccountingLedger {
 
         //create a new transaction object with the user input we previously collected
         Transaction transaction = new Transaction(vendor, LocalDate.now(), description, amount, LocalTime.now());
+        transactionsLedger.add(transaction);
  //       writeTransaction(transaction);
         System.out.printf("Your %s of $%.2f has been processed!\n",transaction.getDescription(), transaction.getAmount());
     }
@@ -190,8 +193,8 @@ public class AccountingLedger {
         }catch (IOException e){
             System.out.println("Error reading file");
         }
-        Collections.sort(transactions, Comparator.comparing(Transaction::getDate));//got this method from the website shared in workbook 3a
-        transactions.forEach(System.out::println);
+        Collections.sort(transactionsLedger, Comparator.comparing(Transaction::getDate));//got this method from the website shared in workbook 3a
+        transactionsLedger.forEach(System.out::println);
     }
     //THIS METHOD FILTERS THROUGH TRANSACTIONS AND SHOWS PAYMENTS
     static void filterPayments(){
@@ -209,8 +212,8 @@ public class AccountingLedger {
                 if (amountToDouble < 0){
                     System.out.println(input);
                 }
-                Collections.sort(transactions, Comparator.comparing(Transaction::getDate));
-                transactions.forEach(System.out::println);
+                Collections.sort(transactionsLedger, Comparator.comparing(Transaction::getDate));
+                transactionsLedger.forEach(System.out::println);
             }
         } catch (FileNotFoundException e) {
             System.out.println("Error finding file");
@@ -231,30 +234,128 @@ public class AccountingLedger {
         //ask and save user input
         System.out.print("Select an option: ");
         int reportOption = scanner.nextInt();
+        scanner.nextLine();
 
         //create an if statement for each report option
         if (reportOption == 1){
+            readAccountingLedger();
             monthToDate();
         } else if (reportOption == 2) {
-
+            readAccountingLedger();
+            previousMonth();
         } else if (reportOption == 3) {
-
+            readAccountingLedger();
+            yearToDate();
         } else if (reportOption == 4) {
-
+            readAccountingLedger();
+            previousYear();
         } else if (reportOption == 5) {
-
+            readAccountingLedger();
+            searchByVendor();
         } else if (reportOption == 0) {
             ledgerScreen();
         }else{
             System.out.println("Invalid option");
         }
     }
+    //THIS METHOD ONLY READS THE CSV INSTEAD OF PRINTING ALL TRANSACTIONS, MADE THIS FOR THE REPORT METHODS
+    static void readAccountingLedger (){
+        try {
+            //create a file reader object connected to the file
+            FileReader fileReader = new FileReader("transactions.csv");
+            //create a buffer reader to manage input stream
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+            String input;
+            //create a loop that reads each line in the csv file
+            while ((input = bufferedReader.readLine()) != null) {
+
+                String[] firstSplit = input.split("\\|");
+                if (firstSplit[0].equals("date")) { //I MADE THIS IF STATEMENT TO SKIP OVER THE FIRST LINE OF THE CSV FILE, IT WAS PREVENTING ME FROM PARSING STRINGS TO DOUBLES
+                    continue;
+                }
+                //create an array to convert string values into corresponding data types
+                double[] stringToDouble = new double[1];
+                stringToDouble[0] = Double.parseDouble(firstSplit[3]);
+
+                LocalDate[] stringToDate = new LocalDate[1];
+                stringToDate[0] = LocalDate.parse(firstSplit[0]);
+
+                LocalTime[] stringToTime = new LocalTime[1];
+                stringToTime[0] = LocalTime.parse(firstSplit[4]);
+
+                //initialize the variable to the corresponding arrays
+                LocalDate date = stringToDate[0];
+                String description = firstSplit[1];
+                String vendor = firstSplit[2];
+                double amount = stringToDouble[0];
+                LocalTime time = stringToTime[0];
+
+                //create a new instance of the employee class
+                Transaction transaction = new Transaction(vendor, date, description, amount, time);
+                transactionsLedger.add(transaction);//forgot to add to array
+            }
+            bufferedReader.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
     //THIS METHOD DISPLAY TRANSACTIONS BY MONTH TO DATE
     static void monthToDate() {
         LocalDate now = LocalDate.now();
-        transactions.stream()
+        //TEST//System.out.println("Total transactions: " + transactionsLedger.size());
+        transactionsLedger.stream()
                 .filter(t -> t.getDate().getMonth() == now.getMonth() && t.getDate().getYear() == now.getYear())
-                .collect(Collectors.toList())
+                .toList()
+                .forEach(t -> System.out.println(t.getDate() + "|" + t.getTime() + "|" + t.getDescription() + "|" + t.getVendor() + "|" + t.getAmount()
+                ));
+    }
+    //THIS METHOD DISPLAYS TRANSACTIONS FROM THE PREVIOUS MONTH
+    static void previousMonth(){
+        LocalDate now = LocalDate.now();
+        LocalDate prevMonth = now.minusMonths(1);
+
+        transactionsLedger.stream()
+                .filter(t -> t.getDate().getMonth() == prevMonth.getMonth() &&
+                        t.getDate().getYear() == prevMonth.getYear())
+                .sorted(Comparator.comparing(Transaction::getDate).reversed())
+                .toList()
+                .forEach(t -> System.out.println(t.getDate() + "|" + t.getTime() + "|" + t.getDescription() + "|" + t.getVendor() + "|" + t.getAmount()
+                ));
+    }
+    //THIS METHOD DISPLAYS TRANSACTIONS YEAR TO DATE
+    static void yearToDate(){
+        LocalDate now = LocalDate.now();
+
+        transactionsLedger.stream()
+                .filter(t -> t.getDate().getYear() == now.getYear())
+                .sorted(Comparator.comparing(Transaction::getDate).reversed())
+                .toList()
+                .forEach(t -> System.out.println(t.getDate() + "|" + t.getTime() + "|" + t.getDescription() + "|" + t.getVendor() + "|" + t.getAmount()
+                ));
+    }
+    //THIS METHOD DISPLAYS TRANSACTION FROM PREVIOUS YEAR
+    static void previousYear(){
+        LocalDate now = LocalDate.now();
+        int prevYear = now.getYear() - 1;
+
+        transactionsLedger.stream()
+                .filter(t -> t.getDate().getYear() == prevYear)
+                .sorted(Comparator.comparing(Transaction::getDate).reversed())
+                .toList()
+                .forEach(t -> System.out.println(t.getDate() + "|" + t.getTime() + "|" + t.getDescription() + "|" + t.getVendor() + "|" + t.getAmount()
+                ));
+
+    }
+    //THIS METHOD DISPLAYS TRANSACTION BY VENDOR
+    static void searchByVendor(){
+        System.out.print("Enter vendor name ");
+        String vendorName = scanner.nextLine().trim();
+
+        transactionsLedger.stream()
+                .filter(t -> t.getVendor().toLowerCase().contains(vendorName))
+                .sorted(Comparator.comparing(Transaction::getDate).reversed())
+                .toList()
                 .forEach(t -> System.out.println(t.getDate() + "|" + t.getTime() + "|" + t.getDescription() + "|" + t.getVendor() + "|" + t.getAmount()
                 ));
     }
