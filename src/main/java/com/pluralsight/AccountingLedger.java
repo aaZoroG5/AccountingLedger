@@ -8,6 +8,7 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Scanner;
+import java.util.stream.Collectors;
 
 public class AccountingLedger {
 
@@ -38,7 +39,7 @@ public class AccountingLedger {
 
             //ask user what they would like to do
             System.out.print("Select an option: ");
-            String homeOption = scanner.nextLine().toUpperCase(); //adding the .toUppercase method here ensures all inputs are set as uppercase
+            String homeOption = scanner.nextLine().trim().toUpperCase(); //adding the .toUppercase method here ensures all inputs are set as uppercase
 
             //create an if statement for the home options given
             if (homeOption.equals("D")) {
@@ -183,14 +184,14 @@ public class AccountingLedger {
                 if (amountToDouble > 0){
                     System.out.println(input);
                 }
-                Collections.sort(transactions, Comparator.comparing(Transaction::getDate));//got this method from the website shared in workbook 3a
-                transactions.forEach(System.out::println);
             }
         } catch (FileNotFoundException e) {
             System.out.println("Error finding file");
         }catch (IOException e){
             System.out.println("Error reading file");
         }
+        Collections.sort(transactions, Comparator.comparing(Transaction::getDate));//got this method from the website shared in workbook 3a
+        transactions.forEach(System.out::println);
     }
     //THIS METHOD FILTERS THROUGH TRANSACTIONS AND SHOWS PAYMENTS
     static void filterPayments(){
@@ -233,7 +234,7 @@ public class AccountingLedger {
 
         //create an if statement for each report option
         if (reportOption == 1){
-
+            monthToDate();
         } else if (reportOption == 2) {
 
         } else if (reportOption == 3) {
@@ -248,5 +249,13 @@ public class AccountingLedger {
             System.out.println("Invalid option");
         }
     }
-    //THIS METHOD
+    //THIS METHOD DISPLAY TRANSACTIONS BY MONTH TO DATE
+    static void monthToDate() {
+        LocalDate now = LocalDate.now();
+        transactions.stream()
+                .filter(t -> t.getDate().getMonth() == now.getMonth() && t.getDate().getYear() == now.getYear())
+                .collect(Collectors.toList())
+                .forEach(t -> System.out.println(t.getDate() + "|" + t.getTime() + "|" + t.getDescription() + "|" + t.getVendor() + "|" + t.getAmount()
+                ));
+    }
 }
