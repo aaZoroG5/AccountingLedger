@@ -17,10 +17,20 @@ public class AccountingLedger {
     public static ArrayList<Transaction> transactions = new ArrayList<>();
 
     public static void main(String[] args) {
+        System.out.println("|| Welcome to AA Ledger ||");
+        mainScreen();
+//        if (!transactions.isEmpty()) {
+//            String latestTransaction = String.valueOf(transactions.get(transactions.size() - 1));
+//            System.out.println(latestTransaction);
+//        }else{
+//            System.out.println("arrayList is empty");
+//        }
+    }
+    //THIS METHOD DISPLAYS THE MAIN SCREEN
+    private static void mainScreen() {
         //created this loop around the menu,so I can exit the program
         while (true) {
             //create home screen
-            System.out.println("|| Welcome to AA Ledger ||");
             System.out.println("Deposit (D)");
             System.out.println("Make a Payment (P)");
             System.out.println("Ledger (L)");
@@ -43,12 +53,6 @@ public class AccountingLedger {
                 System.out.println("Invalid option");
             }
         }
-//        if (!transactions.isEmpty()) {
-//            String latestTransaction = String.valueOf(transactions.get(transactions.size() - 1));
-//            System.out.println(latestTransaction);
-//        }else{
-//            System.out.println("arrayList is empty");
-//        }
     }
     //THIS METHOD READS THE CSV FILE AND DISPLAYS ALL TRANSACTIONS
     public static void displayAll() {
