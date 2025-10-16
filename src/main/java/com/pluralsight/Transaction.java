@@ -5,12 +5,12 @@ import java.time.LocalTime;
 
 public class Transaction {
 
-    //create properties
-    private String vendor;
-    private LocalDate date;
-    private String description;
-    private double amount;
-    private LocalTime time;
+    //create properties, NOTE: Added the final modifier to make the properties immutable
+    private final String vendor;
+    private final LocalDate date;
+    private final String description;
+    private final double amount;
+    private final LocalTime time;
 
     //generate constructor for Transaction objects
     public Transaction(String vendor, LocalDate date, String description, double amount, LocalTime time) {

@@ -1,12 +1,12 @@
 package com.pluralsight;
 
 import javax.sql.rowset.spi.TransactionalWriter;
-import java.io.BufferedReader;
-import java.io.FileReader;
-import java.io.IOException;
+import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.Scanner;
 
 public class AccountingLedger {
@@ -43,15 +43,21 @@ public class AccountingLedger {
                 System.out.println("Invalid option");
             }
         }
+//        if (!transactions.isEmpty()) {
+//            String latestTransaction = String.valueOf(transactions.get(transactions.size() - 1));
+//            System.out.println(latestTransaction);
+//        }else{
+//            System.out.println("arrayList is empty");
+//        }
     }
-    //THIS METHOD READS THE CSV FILE
-    public static void fileReader() {
+    //THIS METHOD READS THE CSV FILE AND DISPLAYS ALL TRANSACTIONS
+    public static void displayAll() {
         //create a try statement that catches I/O exception
         try {
             //create a file reader object connected to the file
-            FileReader payRollReader = new FileReader("transactions.csv");
+            FileReader fileReader = new FileReader("transactions.csv");
             //create a buffer reader to manage input stream
-            BufferedReader bufferedReader = new BufferedReader(payRollReader);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
 
             String input;
             //create a loop that reads each line in the csv file
@@ -63,9 +69,8 @@ public class AccountingLedger {
                 }
                 //TEST for split //System.out.println(firstSplit[0]);
 
-                //created a double array to convert string values into double, note we are only parsing 3 indexes because the fourth is already a string
+                //create an array to convert string values into corresponding data types
                 double[] stringToDouble = new double[1];
-                //parse the strings into double
                 stringToDouble[0] = Double.parseDouble(firstSplit[3]);
 
                 LocalDate[] stringToDate = new LocalDate[1];
@@ -97,8 +102,8 @@ public class AccountingLedger {
         //create ledger screen
         System.out.println("|| Ledger Options ||");
         System.out.println("All transactions (A)");
-        System.out.println("Deposits (D)");
-        System.out.println("Payments (P)");
+        System.out.println("See Deposits (D)");
+        System.out.println("See Payments (P)");
         System.out.println("Reports (R)");
         System.out.println("Home (H)");
 
@@ -108,11 +113,11 @@ public class AccountingLedger {
 
         //create an if statement for the ledger options given
         if (ledgerOption.equals("A")) {
-            fileReader();
+            displayAll();
         } else if (ledgerOption.equals("D")) {
-
+            filterDeposits();
         } else if (ledgerOption.equals("P")) {
-
+            filterPayments();
         } else if (ledgerOption.equals("R")) {
 
         } else if (ledgerOption.equals("H")) {
@@ -125,23 +130,88 @@ public class AccountingLedger {
     //THIS METHOD WRITES NEW TRANSACTIONS THAT ARE EITHER DEPOSITS OR PAYMENTS
     static void newTransaction(boolean deposit){
         //ask the user for the data for a new transaction,if the parameter is true, the transaction is a deposit
+        String description = "Deposit";
         System.out.print("Name of the vendor: ");
         String vendor = scanner.nextLine();
-        System.out.print("Description: ");
-        String description = scanner.nextLine();
         System.out.print("Amount: ");
         double amount = scanner.nextInt();
         scanner.nextLine();
 
         //if parameter is false, then the transaction is a payment
         if(deposit == false){
+            description = "Payment";
             amount = -amount;
         }
 
         //create a new transaction object with the user input we previously collected
         Transaction transaction = new Transaction(vendor, LocalDate.now(), description, amount, LocalTime.now());
-        //TransactionalWriter.appendTransaction(transaction);
-        System.out.println(transaction.getAmount());
+ //       writeTransaction(transaction);
+        System.out.printf("Your %s of $%.2f has been processed!\n",transaction.getDescription(), transaction.getAmount());
     }
-    //TODO:ADD FILE WRITER METHOD
+    //THIS METHOD WRITES NEW TRANSACTION OBJECTS TO THE ARRAYLIST
+    static void writeTransaction(Transaction transaction){//NOTE: had to add parameters so the writer can
+        try {
+            //create a file write object connected to the file
+            FileWriter fileWriter = new FileWriter("transactions.csv");
+            //create a buffer writer to manage input stream
+            BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
+
+            //format the buffer into the csv file format
+            bufferedWriter.write(String.format("%s|%s|%s|%.2f|%s\n", transaction.getVendor(), transaction.getDate(), transaction.getDescription(), transaction.getAmount(), transaction.getTime()));
+
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
+    }
+    //THIS METHOD FILTERS THROUGH TRANSACTION AND SHOWS DEPOSITS
+    static void filterDeposits(){
+        try {
+            FileReader fileReader = new FileReader("transactions.csv");
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+            String input;
+            while((input = bufferedReader.readLine()) !=null){
+                String[] split = input.split("\\|");
+                if(split[0].equals("date")){//this if statement skips over the first line of the csv file
+                    continue;
+                }
+                double amountToDouble = Double.parseDouble(split[3]);
+                if (amountToDouble > 0){
+                    System.out.println(input);
+                }
+                Collections.sort(transactions, Comparator.comparing(Transaction::getDate));//got this method from the website shared in workbook 3a
+                transactions.forEach(System.out::println);
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Error finding file");
+        }catch (IOException e){
+            System.out.println("Error reading file");
+        }
+    }
+    //THIS METHOD FILTERS THROUGH TRANSACTIONS AND SHOWS PAYMENTS
+    static void filterPayments(){
+        try {
+            FileReader fileReader = new FileReader("transactions.csv");
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+
+            String input;
+            while((input = bufferedReader.readLine()) !=null){
+                String[] split = input.split("\\|");
+                if(split[0].equals("date")){
+                    continue;
+                }
+                double amountToDouble = Double.parseDouble(split[3]);
+                if (amountToDouble < 0){
+                    System.out.println(input);
+                }
+                Collections.sort(transactions, Comparator.comparing(Transaction::getDate));
+                transactions.forEach(System.out::println);
+            }
+        } catch (FileNotFoundException e) {
+            System.out.println("Error finding file");
+        }catch (IOException e){
+            System.out.println("Error reading file");
+        }
+    }
+
 }
