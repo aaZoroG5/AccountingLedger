@@ -165,8 +165,9 @@ public class AccountingLedger {
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
             //format the buffer into the csv file format
-            bufferedWriter.write(String.format("%s|%s|%s|%.2f|%s%n", transaction.getVendor(), transaction.getDate(), transaction.getDescription(), transaction.getAmount(), transaction.getTime()));
+            bufferedWriter.write(String.format("\n%s|%s|%s|%.2f|%s", transaction.getDate(), transaction.getDescription(), transaction.getVendor(), transaction.getAmount(), transaction.getTime()));
             //added %n in the string format for a newline rather than \n
+            bufferedWriter.close();
         } catch (IOException e) {
             System.out.println("Error writing to file");
         }
@@ -194,7 +195,7 @@ public class AccountingLedger {
             System.out.println("Error reading file");
         }
         Collections.sort(transactionsLedger, Comparator.comparing(Transaction::getDate));//got this method from the website shared in workbook 3a
-        transactionsLedger.forEach(System.out::println);
+       transactionsLedger.forEach(System.out::println);
     }
     //THIS METHOD FILTERS THROUGH TRANSACTIONS AND SHOWS PAYMENTS
     static void filterPayments(){
