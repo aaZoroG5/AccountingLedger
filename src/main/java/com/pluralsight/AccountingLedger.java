@@ -3,6 +3,7 @@ package com.pluralsight;
 import java.io.*;
 import java.time.LocalDate;
 import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
@@ -161,8 +162,10 @@ public class AccountingLedger {
             //create a buffer writer to manage input stream
             BufferedWriter bufferedWriter = new BufferedWriter(fileWriter);
 
+            //format the time into HH:mm:ss
+            DateTimeFormatter timeFormatter = DateTimeFormatter.ofPattern("HH:mm:ss");
             //format the buffer into the csv file format
-            bufferedWriter.write(String.format("\n%s|%s|%s|%.2f|%s", transaction.getDate(), transaction.getDescription(), transaction.getVendor(), transaction.getAmount(), transaction.getTime()));
+            bufferedWriter.write(String.format("\n%s|%s|%s|%.2f|%s", transaction.getDate(), transaction.getDescription(), transaction.getVendor(), transaction.getAmount(), transaction.getTime().format(timeFormatter)));
             //added %n in the string format for a newline rather than \n
             bufferedWriter.close();
         } catch (IOException e) {
