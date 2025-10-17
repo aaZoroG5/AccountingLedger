@@ -19,12 +19,6 @@ public class AccountingLedger {
     public static void main(String[] args) {
         System.out.println("|| Welcome to AA Ledger ||");
         mainScreen();
-//        if (!transactions.isEmpty()) {
-//            String latestTransaction = String.valueOf(transactions.get(transactions.size() - 1));
-//            System.out.println(latestTransaction);
-//        }else{
-//            System.out.println("arrayList is empty");
-//        }
     }
     //THIS METHOD DISPLAYS THE MAIN SCREEN
     private static void mainScreen() {
@@ -105,37 +99,40 @@ public class AccountingLedger {
         }
     }
     //THIS METHOD DISPLAYS THE LEDGER SCREEN OPTIONS
-    static void ledgerScreen() {
-        //create ledger screen
-        System.out.println("|| Ledger Options ||");
-        System.out.println("All transactions (A)");
-        System.out.println("See Deposits (D)");
-        System.out.println("See Payments (P)");
-        System.out.println("Reports (R)");
-        System.out.println("Home (H)");
+    public static void ledgerScreen() {
+        while (true){
+            //create ledger screen
+            System.out.println("|| Ledger Options ||");
+            System.out.println("All transactions (A)");
+            System.out.println("See Deposits (D)");
+            System.out.println("See Payments (P)");
+            System.out.println("Reports (R)");
+            System.out.println("Home (H)");
 
-        //ask user what they would like to do
-        System.out.print("Select an option: ");
-        String ledgerOption = scanner.nextLine().toUpperCase();
+            //ask user what they would like to do
+            System.out.print("Select an option: ");
+            String ledgerOption = scanner.nextLine().trim().toUpperCase();
 
-        //create an if statement for the ledger options given
-        if (ledgerOption.equals("A")) {
-            displayAll();
-        } else if (ledgerOption.equals("D")) {
-            filterDeposits();
-        } else if (ledgerOption.equals("P")) {
-            filterPayments();
-        } else if (ledgerOption.equals("R")) {
-            reportScreen();
-        } else if (ledgerOption.equals("H")) {
-            mainScreen();
-        } else {
-            System.out.println("Invalid option");
+            //create an if statement for the ledger options given
+            if (ledgerOption.equals("A")) {
+                displayAll();
+            } else if (ledgerOption.equals("D")) {
+                filterDeposits();
+            } else if (ledgerOption.equals("P")) {
+                filterPayments();
+            } else if (ledgerOption.equals("R")) {
+                reportScreen();
+            } else if (ledgerOption.equals("H")) {
+                return;//BUG FIX: TO ENSURE EACH SCREEN RETURNS CLEANLY, USE RETURN INSTEAD OF CALLING THE mainScreen()
+            } else {
+                System.out.println("Invalid option");
+            }
+            transactionsLedger.clear();//BUG FIX: HAD TO ADD THIS LINE SO TH READER REFRESHES WHEN I MOVE BETWEEN SCREENS
         }
 
     }
     //THIS METHOD WRITES NEW TRANSACTIONS THAT ARE EITHER DEPOSITS OR PAYMENTS
-    static void newTransaction(boolean deposit){
+    public static void newTransaction(boolean deposit){
         //ask the user for the data for a new transaction,if the parameter is true, the transaction is a deposit
         String description = "Deposit";
         System.out.print("Name of the vendor: ");
@@ -157,7 +154,7 @@ public class AccountingLedger {
         System.out.printf("Your %s of $%.2f has been processed!\n",transaction.getDescription(), transaction.getAmount());
     }
     //THIS METHOD WRITES NEW TRANSACTION OBJECTS TO THE ARRAYLIST
-    static void writeTransaction(Transaction transaction){//NOTE: had to add parameters so the writer can
+    public static void writeTransaction(Transaction transaction){//NOTE: had to add parameters so the writer can
         try {
             //create a file write object connected to the file
             FileWriter fileWriter = new FileWriter("transactions.csv", true);//BUG FIX: THE TRUE PARAMETER OPENS THE FILE IF IT EXISTS AND APPENDS TO THE FILE, DOESN'T DELETE WHAT'S ALREADY THERE
@@ -173,7 +170,7 @@ public class AccountingLedger {
         }
     }
     //THIS METHOD FILTERS THROUGH TRANSACTION AND SHOWS DEPOSITS
-    static void filterDeposits(){
+    public static void filterDeposits(){
         try {
             FileReader fileReader = new FileReader("transactions.csv");
             BufferedReader bufferedReader = new BufferedReader(fileReader);
@@ -194,11 +191,11 @@ public class AccountingLedger {
         }catch (IOException e){
             System.out.println("Error reading file");
         }
-        Collections.sort(transactionsLedger, Comparator.comparing(Transaction::getDate));//got this method from the website shared in workbook 3a
-       transactionsLedger.forEach(System.out::println);
+//        Collections.sort(transactionsLedger, Comparator.comparing(Transaction::getDate));//got this method from the website shared in workbook 3a
+//       transactionsLedger.forEach(System.out::println);
     }
     //THIS METHOD FILTERS THROUGH TRANSACTIONS AND SHOWS PAYMENTS
-    static void filterPayments(){
+    public static void filterPayments(){
         try {
             FileReader fileReader = new FileReader("transactions.csv");
             BufferedReader bufferedReader = new BufferedReader(fileReader);
@@ -223,44 +220,47 @@ public class AccountingLedger {
         }
     }
     //THIS METHOD DISPLAYS THE REPORT SCREEN
-    static void reportScreen(){
-        System.out.println("""
+    public static void reportScreen(){
+        while(true){
+            System.out.println("""
                 (1) Month to Date
                 (2) Previous Month
                 (3) Year to Date
                 (4) Previous Year
                 (5) Search by Vendor
-                (0) Back
+                (0) Back to Ledger Screen
                 """);
-        //ask and save user input
-        System.out.print("Select an option: ");
-        int reportOption = scanner.nextInt();
-        scanner.nextLine();
+            //ask and save user input
+            System.out.print("Select an option: ");
+            int reportOption = scanner.nextInt();
+            scanner.nextLine();
 
-        //create an if statement for each report option
-        if (reportOption == 1){
-            readAccountingLedger();
-            monthToDate();
-        } else if (reportOption == 2) {
-            readAccountingLedger();
-            previousMonth();
-        } else if (reportOption == 3) {
-            readAccountingLedger();
-            yearToDate();
-        } else if (reportOption == 4) {
-            readAccountingLedger();
-            previousYear();
-        } else if (reportOption == 5) {
-            readAccountingLedger();
-            searchByVendor();
-        } else if (reportOption == 0) {
-            ledgerScreen();
-        }else{
-            System.out.println("Invalid option");
+            //create an if statement for each report option
+            if (reportOption == 1){
+                readAccountingLedger();
+                monthToDate();
+            } else if (reportOption == 2) {
+                readAccountingLedger();
+                previousMonth();
+            } else if (reportOption == 3) {
+                readAccountingLedger();
+                yearToDate();
+            } else if (reportOption == 4) {
+                readAccountingLedger();
+                previousYear();
+            } else if (reportOption == 5) {
+                readAccountingLedger();
+                searchByVendor();
+            } else if (reportOption == 0) {
+                return;//BUG FIX: TO ENSURE EACH SCREEN RETURNS CLEANLY, USE RETURN INSTEAD OF CALLING THE ledgerScreen()
+            }else{
+                System.out.println("Invalid option");
+            }
         }
+
     }
     //THIS METHOD ONLY READS THE CSV INSTEAD OF PRINTING ALL TRANSACTIONS, MADE THIS FOR THE REPORT METHODS
-    static void readAccountingLedger (){
+    public static void readAccountingLedger (){
         try {
             //create a file reader object connected to the file
             FileReader fileReader = new FileReader("transactions.csv");
@@ -302,7 +302,7 @@ public class AccountingLedger {
         }
     }
     //THIS METHOD DISPLAY TRANSACTIONS BY MONTH TO DATE
-    static void monthToDate() {
+    public static void monthToDate() {
         LocalDate now = LocalDate.now();
         //TEST//System.out.println("Total transactions: " + transactionsLedger.size());
         transactionsLedger.stream()
@@ -312,7 +312,7 @@ public class AccountingLedger {
                 ));
     }
     //THIS METHOD DISPLAYS TRANSACTIONS FROM THE PREVIOUS MONTH
-    static void previousMonth(){
+    public static void previousMonth(){
         LocalDate now = LocalDate.now();
         LocalDate prevMonth = now.minusMonths(1);
 
@@ -325,7 +325,7 @@ public class AccountingLedger {
                 ));
     }
     //THIS METHOD DISPLAYS TRANSACTIONS YEAR TO DATE
-    static void yearToDate(){
+    public static void yearToDate(){
         LocalDate now = LocalDate.now();
 
         transactionsLedger.stream()
@@ -336,7 +336,7 @@ public class AccountingLedger {
                 ));
     }
     //THIS METHOD DISPLAYS TRANSACTION FROM PREVIOUS YEAR
-    static void previousYear(){
+    public static void previousYear(){
         LocalDate now = LocalDate.now();
         int prevYear = now.getYear() - 1;
 
@@ -349,7 +349,7 @@ public class AccountingLedger {
 
     }
     //THIS METHOD DISPLAYS TRANSACTION BY VENDOR
-    static void searchByVendor(){
+    public static void searchByVendor(){
         System.out.print("Enter vendor name ");
         String vendorName = scanner.nextLine().trim();
 
