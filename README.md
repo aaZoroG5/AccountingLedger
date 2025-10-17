@@ -8,7 +8,6 @@ A command-line **Java accounting ledger** that allows users to record deposits, 
 - [About the Project](#about-the-project)
 - [Features](#features)
 - [Installation & Setup](#installation--setup)
-- [CSV File Format](#csv-file-format)
 - [Interesting Code Snippet](#interesting-code-snippet)
 - [Technologies Used](#technologies-used)
 - [Author](#author)
@@ -36,13 +35,6 @@ All transactions are stored in a CSV file for easy reading and editing.
 ✅ Search transactions by vendor  
 ✅ Data saved in CSV format  
 ✅ User-friendly CLI navigation  
-
----
-
-date|description|vendor|amount|time
-
-2025-10-14|Deposit|Amazon|150.00|18:45:21
-2025-10-14|Payment|Target|-45.00|18:46:02
 
 ---
 
