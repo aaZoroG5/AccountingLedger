@@ -40,6 +40,7 @@ All transactions are stored in a CSV file for easy reading and editing.
 ---
 
 date|description|vendor|amount|time
+
 2025-10-14|Deposit|Amazon|150.00|18:45:21
 2025-10-14|Payment|Target|-45.00|18:46:02
 
@@ -106,4 +107,5 @@ CSV Data Format
 ## Author
 
 Andy.A
-GitHun: https://github.com/aaZoroG5
+
+GitHub: https://github.com/aaZoroG5
